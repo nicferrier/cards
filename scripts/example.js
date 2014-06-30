@@ -123,6 +123,7 @@ playingCardType.createdCallback = function ()  {
       + "</div></div>";
   }
 };
+
 var PlayingCard = document.registerElement(
   "playing-card", { prototype: playingCardType }
 );
