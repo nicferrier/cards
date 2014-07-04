@@ -33,7 +33,7 @@ var bpg_cards =
            "clubs": "black",
            "spades": "black",
            "hearts": "red",
-           "diamonds": "red"
+           "diamonds": "red",
          }[this.getAttribute("suit")];
 
          var side = getAttr("side", "front");
