@@ -17,7 +17,7 @@ var util = require("util");
 
 // Like Emacs Lisp random
 function nic_random (n) {
-  return Math.floor(n/100 * Math.floor(Math.floor(Math.random() * 100)));
+  return Math.floor(n * Math.random());
 }
 
 
