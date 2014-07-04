@@ -147,6 +147,7 @@ var bpg_cards =
        }
      };
 
+     // initialize the playing card lib
      var init = function (doc) {
        var PlayingCard = doc.registerElement(
          "playing-card", { prototype: playingCardType }
