@@ -10,6 +10,17 @@ var bpg_cards =
   (function () {
      var playingCardType = Object.create(HTMLElement.prototype);
      playingCardType.createdCallback = function ()  {
+       // Capture 'this'
+       var self = this;
+
+       // A quick access function
+       var getAttr = function (name, defaultValue) {
+         var val = self.getAttribute(name);
+         return (val == null && defaultValue != null) ? defaultValue:val;
+       };
+
+
+       // We need to cope with nulls in these attributes
        if (this.getAttribute("suit") && this.getAttribute("value")) {
          var suitEnt = {
            "clubs": "&clubs;",
@@ -24,6 +35,8 @@ var bpg_cards =
            "hearts": "red",
            "diamonds": "red"
          }[this.getAttribute("suit")];
+
+         var side = getAttr("side", "front");
 
          var value = {
            "1": "1",
