@@ -137,11 +137,13 @@ var bpg_cards =
              + util.format("<div class=\"spotC5\">%s</div>", suitEnt)
          }[value];
 
-         this.innerHTML = "<div class=\"card\" style=\"" + this.getAttribute("style") + "\">"
-           + "<div class=\"front " + color + "\">"
-           + "<div class=\"index\">" + value + "</div>"
-           + valueMarkup
-           + "</div></div>";
+         this.innerHTML = util.format(
+           "<div class=\"card\" style=\"%s\">"
+             + "<div class=\"%s %s\">"
+             + "<div class=\"index\">%s</div>%s</div></div>",
+           this.getAttribute("style"), 
+           side, color, 
+           (side == "back") ? "":value, (side=="back") ? "":valueMarkup);
        }
      };
 
