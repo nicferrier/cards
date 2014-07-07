@@ -1,0 +1,17 @@
+{
+  "name": "bpg-playing-card",
+  "version": "0.0.1",
+  "description": "A playing card as a WebComponent. Easily make playing cards with HTML.",
+  "keywords": ["webcomponent", "cards", "playingcard", "poker"],
+  "homepage": "http://fn10vir1826.ivycomptech.co.in/Nic/carddeck-webc/tree/master",
+  "license": "GPL-3.0+",
+  "author": {
+    "name": "Nic Ferrier",
+    "email": "nicholas.ferrier@bwinparty.com",
+    "url": "http://nic.ferrier.me.uk"
+  },
+  "dependencies": {
+    "polyfill-webcomponents": ">=0.20140621.0",
+    "browserify": ">=4.2.0"
+  }
+}
