@@ -15,12 +15,10 @@ This will produce an Ace of Hearts and a Jack of Clubs.
 This may be the beginning of a useful library.
 
 
-== Running
+## Running
+Everything is packaged as a browserifyable node package.
 
-We need browserify to run this. 
-
-Currently use the supplied Makefile to install the dependencies (I
-hope to replace that with package.json).
+`npm install` this and then use browserify to serve it.
 
 To run browserify you need to use a server automatically running
 browserify on any ".js" file. I use elnode with it's convienient
