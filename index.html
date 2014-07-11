@@ -2,46 +2,20 @@
 <html>
     <head>
         <meta charset="utf-8"></meta>
+        <meta name="viewport" content="width=450,user-scalable=no"></meta>
+        <link rel="stylesheet" href="/style.css" type="text/css"></link>
         <title>7 card stud</title>
     </head>
     <body>
-        <playing-card style="top:1em; left:1em;" 
-                      suit="clubs" value="4"></playing-card>
-
-        <playing-card style="top:1em;left:5em;" 
-                      suit="clubs" value="2"></playing-card>
-
-        <playing-card style="top:1em;left:9em;" 
-                      suit="hearts" value="1"></playing-card>
-
-        <playing-card style="top:1em;left:13em;" 
-                      suit="hearts" value="4"></playing-card>
-
-        <playing-card style="top:1em;left:17em;" 
-                      suit="hearts" value="11"></playing-card>
-
-        <playing-card style="top:7em;left:1em;" 
-                      suit="diamonds" value="5"></playing-card>
-
-        <playing-card style="top:7em;left:5em;" 
-                      suit="clubs" value="6"></playing-card>
-
-        <playing-card style="top:7em;left:9em;" 
-                      suit="diamonds" value="7"></playing-card>
-
-        <playing-card style="top:7em;left:13em;" 
-                      suit="hearts" value="8"></playing-card>
-
-        <playing-card style="top:7em;left:17em;" 
-                      suit="diamonds" value="9"></playing-card>
-
-        <playing-card style="top:13em;left:1em;" 
-                      suit="diamonds" value="10"></playing-card>
-
-        <playing-card style="top:13em;left:5em;" 
-                      suit="diamonds"
-                      side="back" value="10"
-                      ></playing-card>
+        <div id="console"></div>
+        <div id="connect">
+            <div id="connectbox">
+                <div id="vidCap"></div>
+                <div id="qrcode"></div>
+            </div>
+        </div>
+        <!-- we should create this in the readQRCode script -->
+        <canvas id="qr-canvas"></canvas>
         <script src="/scripts/example.js"></script>
     </body>
 </html>

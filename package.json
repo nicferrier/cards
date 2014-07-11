@@ -12,6 +12,9 @@
   },
   "dependencies": {
     "polyfill-webcomponents": ">=0.20140621.0",
+    "jsqrcode-lite": "0.1.0",
+    "qrcode-npm": "0.0.3",
+    "jquery-browserify": "1.8.1",
     "browserify": ">=4.2.0"
   }
 }
