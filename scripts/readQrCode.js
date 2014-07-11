@@ -36,6 +36,16 @@ var initQRCanvas = function (receiveQR) {
           function (qrData)  {
             // Turn off the video
             videoObject.pause();
+            try {
+              videoObject.mozSrcObject = null;
+            }
+            catch (e) {
+              try {
+                videoObject.src = "";
+              }
+              catch (e) {
+              }
+            }
             // Call the user function
             receiveQR(qrData);
           }
