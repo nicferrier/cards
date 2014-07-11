@@ -5,14 +5,17 @@ var video = require("./userMedia.js");
 
 var FINDER_DELAY = 500;
 
-var initQRCanvas = function (width, height, receiveQR) {
+var initQRCanvas = function (receiveQR) {
+  var canvasElement = document.createElement("canvas");
+  canvasElement.id = "qr-canvas";
+  document.body.appendChild(canvasElement);;
   // We could create this instead of refering to it
-  var gCanvas = document.getElementById("qr-canvas"); 
-  gCanvas.style.width = width + "px";
-  gCanvas.style.height = height + "px";
-  gCanvas.width = width;
-  gCanvas.height = height;
-  var gCtx = gCanvas.getContext("2d");
+  var width = 800, height = 600;
+  canvasElement.style.width = width + "px";
+  canvasElement.style.height = height + "px";
+  canvasElement.width = width;
+  canvasElement.height = height;
+  var gCtx = canvasElement.getContext("2d");
   gCtx.clearRect(0, 0, width, height);
 
   // This function maps the videoObject and the canvas together
@@ -53,9 +56,9 @@ var initQRCanvas = function (width, height, receiveQR) {
 
 // Capture the QR code by making a video in the videoId div and send
 // the one argument to the receiveQR function
-exports.capture = function (width, height, videoId, receiveQR) {
-  var captureToCanvas = initQRCanvas(width, height, receiveQR);
-  
+exports.capture = function (videoId, receiveQR) {
+  var captureToCanvas = initQRCanvas(receiveQR);
+
   // Now initialise the camera and when the video works have the QR code
   // reader kick in
   var vidDiv = document.getElementById(videoId);

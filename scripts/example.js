@@ -40,7 +40,7 @@ var start = function (id) {
   
   // Setup the camera to capture a QR code of the other side
   qrCodeRead.capture(
-    800, 600, "vidCap",
+    "vidCap",
     function (receivedQR) {
       // alert(util.format("received the QR - %s", receivedQR));
       $("#connect").toggle({duration: 400});
