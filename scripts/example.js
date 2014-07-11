@@ -16,6 +16,7 @@ var peer = new Peer({
 
 // What to do when we a connection is opened
 var onConOpen = function (con, remoteId) {
+  console.log("onConOpen: connection from: ", remoteId);
   con.on(
     'data', 
     function (data) {
