@@ -1,9 +1,24 @@
-// read qr codes with the user-media web camera
+// Read qr codes with the user-media web camera
 
 var decode = require('jsqrcode-lite');
 var video = require("./userMedia.js");
 
-var FINDER_DELAY = 500;
+var FINDER_DELAY = 1000;
+
+var abandonVideo = function (videoObject) {
+  videoObject.pause();
+  try {
+    videoObject.mozSrcObject = null;
+  }
+  catch (e) {
+    try {
+      videoObject.src = "";
+    }
+    catch (e) {
+    }
+  }
+};
+
 
 var initQRCanvas = function (receiveQR) {
   var canvasElement = document.createElement("canvas");
@@ -19,10 +34,10 @@ var initQRCanvas = function (receiveQR) {
   gCtx.clearRect(0, 0, width, height);
 
   // This function maps the videoObject and the canvas together
-  var func = function(videoObject) {
+  var captureFunc = function(videoObject, captureTestObj) {
     try {
       gCtx.drawImage(videoObject, 0, 0);
-      try{
+      try {
         var dataBytes = gCtx.getImageData(0, 0, width, height).data;
         // This is a sucky way to do this, it would be better to alter
         // jsqrcode-lite to export more
@@ -35,17 +50,7 @@ var initQRCanvas = function (receiveQR) {
           args,
           function (qrData)  {
             // Turn off the video
-            videoObject.pause();
-            try {
-              videoObject.mozSrcObject = null;
-            }
-            catch (e) {
-              try {
-                videoObject.src = "";
-              }
-              catch (e) {
-              }
-            }
+            abandonVideo(videoObject);
             // Call the user function
             receiveQR(qrData);
           }
@@ -53,12 +58,26 @@ var initQRCanvas = function (receiveQR) {
       }
       catch(e){       
         console.log(e);
-        setTimeout(function () { func(videoObject); }, FINDER_DELAY);
+        if (captureTestObj.isOn) {
+          setTimeout(function () { 
+            captureFunc(videoObject, captureTestObj); 
+          }, FINDER_DELAY);
+        }
+        else {
+          abandonVideo(videoObject);
+        }
       };
     }
     catch(e){       
       console.log(e);
-      setTimeout(function () { func(videoObject); }, FINDER_DELAY);
+      if (captureTestObj.isOn) {
+        setTimeout(function () { 
+          captureFunc(videoObject, captureTestObj); 
+        }, FINDER_DELAY);
+      }
+      else {
+        abandonVideo(videoObject);
+      }
     };
   };
   return func;
@@ -67,20 +86,26 @@ var initQRCanvas = function (receiveQR) {
 // Capture the QR code by making a video in the videoId div and send
 // the one argument to the receiveQR function
 exports.capture = function (videoId, receiveQR) {
-  var captureToCanvas = initQRCanvas(receiveQR);
-
+  var captureToCanvasFn = initQRCanvas(receiveQR);
   // Now initialise the camera and when the video works have the QR code
   // reader kick in
   var vidDiv = document.getElementById(videoId);
   vidDiv.innerHTML = "<video id=\"vid\" autoplay=\"0\"></video>"; 
   var videoObject = document.getElementById("vid");
+  var captureOnObj = { isOn: true }; // closed var used to turn everything off
   video.doGetUserMedia(
     videoObject,
     // Success function is called when the video works
     function () {
-      captureToCanvas(videoObject);
+      captureToCanvasFn(videoObject, captureOnObj);
     }
   );
+  // Return a function to turn the capture off
+  var stopFunc = function () {
+    console.log("turn off function called");
+    captureOn.isOn = false;
+  };
+  return stopFunc;
 };
 
 // readQrCode.js ends here
