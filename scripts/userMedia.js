@@ -1,18 +1,6 @@
 // Abstract usermedia stuff a little
 var util = require("util");
 
-function htmlLog(args) {
-  if (arguments.length == 1) {
-    $("#console").append(util.format("<li>%j</li>", args));
-  }
-  else {
-    for (i in arguments) {
-      var arg = arguments[i];
-      $("#console").append(util.format("<li>%j</li>", arg));
-    }
-  }
-}
-
 // Find a camera, ideally an environment facing one, to capture the
 // QR code.
 //  

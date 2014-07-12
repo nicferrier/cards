@@ -13,18 +13,29 @@ var peer = new Peer({
   }
 );
 
-
-// What to do when we a connection is opened
-var onConOpen = function (con, remoteId) {
-  console.log("onConOpen: connection from: ", remoteId);
-  con.on(
-    'data', 
-    function (data) {
-      console.log(util.format("data from %s: %s", remoteId, data));
+function htmlLog(args) {
+  if (arguments.length == 1) {
+    $("#console").append(util.format("<li>%j</li>", args));
+  }
+  else {
+    for (i in arguments) {
+      var arg = arguments[i];
+      $("#console").append(util.format("<li>%j</li>", arg));
     }
-  );
-  var value = $("#peerid").text();
-  con.send("my id is: " + value);
+  }
+}
+
+var onData = function (dataCon, data, from) {
+  var fmt = util.format("data (%s): %s", from, data);
+  console.log(fmt);
+  htmlLog("dataCon.on", fmt);
+};
+
+// What to do when a data connection is opened
+var onConOpen = function (dataCon, from) {
+  console.log("open from ", from);
+  dataCon.on("data", function (data) { onData(dataCon, data, from); });
+  dataCon.send(util.format( "some data from con open via %s", from));
 };
 
 // Receive the random peer-id then start the poker game with a peer
@@ -32,35 +43,44 @@ var onConOpen = function (con, remoteId) {
 // The peer communicates with us by sending us a communication,
 // presumably after reading our peer-id-QR, or by us reading the peer-id
 // with a QR detect.
-var start = function (id) {
+var start = function (peerId) {
   // Make a qr code of the ID so we can give it to the other user
   var qr = qrCode.qrcode(4, 'M');
-  qr.addData(id);
+  qr.addData(peerId);
   qr.make();
   $("#qrcode").html(qr.createImgTag(8));
-  
-  // Setup the camera to capture a QR code of the other side
-  qrCodeRead.capture(
+
+  // Setup the camera to decode a QR code of the other side
+  var abortCameraFn = qrCodeRead.capture(
     "vidCap",
     function (receivedQR) {
-      // alert(util.format("received the QR - %s", receivedQR));
       $("#connect").toggle({duration: 400});
-      var con = peer.connect(receivedQR);
-      con.on('open', function (rid) { onConOpen(con, rid);});
+      var dataConn = peer.connect(receivedQR);
+      dataConn.on('open', function () { onConOpen(dataConn, "1");});
+      dataConn.on("data", function (data) { onData(dataConn, data, "1"); });
+      dataConn.send(util.format("some data from the QR side %s", receivedQR));
     }
   );
+
+  // Receive a connection from the QR decode side
+  peer.on(
+    "connection", 
+    function(dataConn) { 
+      $("#connect").toggle({duration: 400});
+      abortCameraFn();
+      dataConn.on("open", function () { onConOpen(dataConn, "2"); });
+      dataConn.on("data", function (data) { onData(dataConn, data, "2"); });
+      dataConn.send(util.format("some data from the non-QR side %s", peer.id));
+    }
+  );
+  
   $("#connect").toggle({duration: 400});
 };
 
 // Initiate the peer connection to get a peer-id
 peer.on('open', start);
 
-peer.on(
-  'connection', 
-  function(con) { con.on("open", function (rid) { onConOpen(con, rid);});}
-);
-
-
+// And now the cards
 var bpg_cards = require ("./bpg-cards.js");
 var PlayingCard = bpg_cards.card_init(document);
 
