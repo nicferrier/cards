@@ -80,7 +80,7 @@ var initQRCanvas = function (receiveQR) {
       }
     };
   };
-  return func;
+  return captureFunc;
 }
 
 // Capture the QR code by making a video in the videoId div and send
@@ -103,7 +103,7 @@ exports.capture = function (videoId, receiveQR) {
   // Return a function to turn the capture off
   var stopFunc = function () {
     console.log("turn off function called");
-    captureOn.isOn = false;
+    captureOnObj.isOn = false;
   };
   return stopFunc;
 };
