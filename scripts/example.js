@@ -7,11 +7,17 @@ var qrCodeRead = require("./readQrCode.js");
 
 var PeerJs = require("./peer.js");
 var Peer = PeerJs.Peer;
-var peer = new Peer({
-    key: "ntq9engji39grpb9",
-    debug: 1
+var peer = (function () {
+  if (document.location.search == "?master") {
+    return new Peer(10001, { key: "ntq9engji39grpb9", debug: 1 });
   }
-);
+  else if (document.location.search == "?slave") {
+    return new Peer(10002, { key: "ntq9engji39grpb9", debug: 1 });
+  }
+  else {
+    return new Peer({ key: "ntq9engji39grpb9", debug: 1 });
+  }
+})();
 
 function htmlLog(args) {
   if (arguments.length == 1) {
