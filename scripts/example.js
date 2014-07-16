@@ -4,22 +4,16 @@ var util = require("util");
 var $ = require("jquery-browserify");
 var qrCode = require("qrcode-npm");
 var qrCodeRead = require("./readQrCode.js");
+var PeerJs = require("./peerx.js");
 
-var PeerJs = require("./peer.js");
-var Peer = PeerJs.Peer;
-var peer = (function () {
-  if (document.location.search == "?master") {
-    return new Peer(10001, { key: "ntq9engji39grpb9", debug: 1 });
-  }
-  else if (document.location.search == "?slave") {
-    return new Peer(10002, { key: "ntq9engji39grpb9", debug: 1 });
-  }
-  else {
-    return new Peer({ key: "ntq9engji39grpb9", debug: 1 });
-  }
-})();
-
-function htmlLog(args) {
+var apiKey = "ntq9engji39grpb9";
+var sessionId = 1;
+var peerIdDefaults = {
+  debugMasterPeerId: 10001,
+  debugSlavePeerId: 10002
+};
+var peer = PeerJs.makePeer(apiKey, peerIdDefaults);
+var htmlLog = function (args) {
   if (arguments.length == 1) {
     $("#console").append(util.format("<li>%j</li>", args));
   }
@@ -83,8 +77,27 @@ var start = function (peerId) {
   $("#connect").toggle({duration: 400});
 };
 
-// Initiate the peer connection to get a peer-id
-peer.on('open', start);
+
+// Initiate the peer connection to get a peer-id or use the debug stuff
+if (peer.id == peerIdDefaults.debugSlavePeerId) {
+  var dataCon = peer.connect(peerIdDefaults.debugMasterPeerId);
+  dataCon.on("open", function (dc) { 
+    onConOpen(dataCon, function () {
+      dataCon.send({ session: sessionId, 
+                     verb: "GET", 
+                     uri: "master|check" });
+    });
+  });
+}
+else if (peer.id == peerIdDefaults.debugMasterPeerId) {
+  peer.on("connection", function (dc) { 
+    dc.on("open", function () { onConOpen(dc); });
+  });
+}
+else {
+  peer.on('open', start);
+}
+
 
 // And now the cards
 var bpg_cards = require ("./bpg-cards.js");
