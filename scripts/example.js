@@ -23,26 +23,21 @@ var htmlLog = function (args) {
       $("#console").append(util.format("<li>%j</li>", arg));
     }
   }
-}
+};
 
-var onData = function (dataCon, data, from) {
-  var fmt = util.format("data (%s): %s", from, data);
-  console.log(fmt);
-  htmlLog("dataCon.on", fmt);
+var onData = function (dataCon, data) {
+  var fmt = util.format("data: %s", data);
+  console.log("onData", data);
 };
 
 // What to do when a data connection is opened
-var onConOpen = function (dataCon, from) {
-  console.log("open from ", from);
-  dataCon.on("data", function (data) { onData(dataCon, data, from); });
-  dataCon.send(util.format( "some data from con open via %s", from));
+var onConOpen = function (dataCon, next) {
+  console.log("onConOpen", dataCon);
+  dataCon.on("data", function (data) { onData(dataCon, data); });
+  if (next) { next(); }
 };
 
-// Receive the random peer-id then start the poker game with a peer
-// 
-// The peer communicates with us by sending us a communication,
-// presumably after reading our peer-id-QR, or by us reading the peer-id
-// with a QR detect.
+// Receive a peerId and become the master or a slave via a QR
 var start = function (peerId) {
   // Make a qr code of the ID so we can give it to the other user
   var qr = qrCode.qrcode(4, 'M');
@@ -56,24 +51,25 @@ var start = function (peerId) {
     function (receivedQR) {
       $("#connect").toggle({duration: 400});
       var dataConn = peer.connect(receivedQR);
-      dataConn.on('open', function () { onConOpen(dataConn, "1");});
-      dataConn.on("data", function (data) { onData(dataConn, data, "1"); });
-      dataConn.send(util.format("some data from the QR side %s", receivedQR));
+      dataConn.on('open', onConOpen, function () {
+        dataConn.send({ session: sessionId, 
+                        verb: "GET", 
+                        uri: "master|check" });
+      });
     }
   );
 
-  // Receive a connection from the QR decode side
+  // Listen from a connection from the QR decode side
   peer.on(
     "connection", 
     function(dataConn) { 
       $("#connect").toggle({duration: 400});
       abortCameraFn();
-      dataConn.on("open", function () { onConOpen(dataConn, "2"); });
-      dataConn.on("data", function (data) { onData(dataConn, data, "2"); });
-      dataConn.send(util.format("some data from the non-QR side %s", peer.id));
+      dataConn.on("open", onConOpen);
     }
   );
   
+  // Open the connect display
   $("#connect").toggle({duration: 400});
 };
 
@@ -102,5 +98,6 @@ else {
 // And now the cards
 var bpg_cards = require ("./bpg-cards.js");
 var PlayingCard = bpg_cards.card_init(document);
+
 
 // example.js ends here
