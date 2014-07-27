@@ -117,6 +117,22 @@ function doGetUserMedia (videoObject, onSuccess) {
   );
 }
 
+function stopCapture (videoObject) {
+  videoObject.pause();
+  try {
+    videoObject.mozSrcObject = null;
+  }
+  catch (e) {
+    try {
+      videoObject.src = "";
+    }
+    catch (e) {
+    }
+  }
+};
+
+
 exports.doGetUserMedia = doGetUserMedia;
+exports.stopCapture = stopCapture;
 
 // userMedia.js ends here

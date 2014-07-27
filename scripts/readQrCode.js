@@ -5,21 +5,6 @@ var video = require("./userMedia.js");
 
 var FINDER_DELAY = 1000;
 
-var abandonVideo = function (videoObject) {
-  videoObject.pause();
-  try {
-    videoObject.mozSrcObject = null;
-  }
-  catch (e) {
-    try {
-      videoObject.src = "";
-    }
-    catch (e) {
-    }
-  }
-};
-
-
 var initQRCanvas = function (receiveQR) {
   var canvasElement = document.createElement("canvas");
   canvasElement.id = "qr-canvas";
@@ -50,7 +35,7 @@ var initQRCanvas = function (receiveQR) {
           args,
           function (qrData)  {
             // Turn off the video
-            abandonVideo(videoObject);
+            video.stopCapture(videoObject);
             // Call the user function
             receiveQR(qrData);
           }
@@ -64,7 +49,7 @@ var initQRCanvas = function (receiveQR) {
           }, FINDER_DELAY);
         }
         else {
-          abandonVideo(videoObject);
+          video.stopCapture(videoObject);
         }
       };
     }
@@ -76,7 +61,7 @@ var initQRCanvas = function (receiveQR) {
         }, FINDER_DELAY);
       }
       else {
-        abandonVideo(videoObject);
+        video.stopCapture(videoObject);
       }
     };
   };
